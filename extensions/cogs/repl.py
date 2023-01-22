@@ -17,11 +17,20 @@ class ReplCog(StellaCog, name="Repl"):
         if message.channel.id != REPL_CHANNEL:
             return
 
+        if message.author.bot:
+            return
+
+        if not await self.bot.is_owner(message.author):
+            return
+
         ctx = await self.bot.get_context(message)
         ctx.prefix = await self.bot.get_prefix(message)
         await self.jishaku_repl(ctx, message)
 
     async def runner_callback(self, interaction: discord.Interaction, message: discord.Message):
+        if not await self.bot.is_owner(interaction.user):
+            return await interaction.response.send_message("You cannot run this command.", ephemeral=True)
+
         ctx = await self.bot.get_context(interaction)
         await self.jishaku_repl(ctx, message)
 
